@@ -9,8 +9,8 @@ int main(int ac, char **av)
     else if (ac == 2)
     {
         Bitcoin a;
-        a.checkFileCsv();
-        a.checkFileBtc(av[1]);
+        if (a.checkFileCsv() == 0)
+            a.checkFileBtc(av[1]);
     }
     else
     {
