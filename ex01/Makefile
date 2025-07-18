@@ -1,4 +1,4 @@
-NAME = RPN
+NAME = RPN 
 FLAG = -Wall -Werror -Wextra -std=c++98
 SRCS = main.cpp RPN.cpp
 

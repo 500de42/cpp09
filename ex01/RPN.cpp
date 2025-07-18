@@ -10,12 +10,14 @@ int isOPerator(std::string line)
 
 int Pars(std::string a)
 {
-    if (std::isdigit(a) && !isOPerator(a))
+    if (a.size() > 1)
+       return 0;
+    else if (!std::isdigit(a[0]) && !isOPerator(a))
         return 0;
     return 1;
 }
 
-int RPN::parsing(const char **av)
+int RPN::algo(char **av)
 {
     std::string token;
     std::string a(av[1]);
@@ -23,20 +25,21 @@ int RPN::parsing(const char **av)
 
     while (ss >> token)
     {
-        if (!Pars(token))
+        if (!Pars(token) && token != "0")
         {
-            std::cout << "error\n";
+            std::cout << "Error\n";
             return 1;
         }
-        int nb = std::isdigit(std::atoi(token.c_str()));
+        int nb = std::atoi(token.c_str());
         if (nb || token == "0")
         {
             if (nb < 0 || nb > 9)
             {
-                std::cout << "error\n";
+                std::cout << "Error\n";
                 return 1;
             }
             this->stack.push(nb);
+            continue;
         }
         else if (isOPerator(token))
         {
@@ -54,12 +57,25 @@ int RPN::parsing(const char **av)
                 else if (token == "*")
                     nb1 = b * a;
                 this->stack.push(nb1);
+                continue;
+            }
+            else 
+            {
+                std::cout << "Error\n";
+                return 1;
             }
         }
         else 
         {
-            std::cout << "error\n";
             return 1;
         }
     }
+    // std::cout << stack.size() << std::endl;
+    // for(size_t i = 0; i < stack.size(); i++)
+    // {  
+    //     std::cout << stack.top() << std::endl;
+    //     stack.pop();
+    // }
+    std::cout << stack.top() << std::endl;
+    return 0;
 }

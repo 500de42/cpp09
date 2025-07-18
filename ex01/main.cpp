@@ -9,8 +9,7 @@ int main(int ac, char **av)
     else if (ac == 2)
     {
         RPN a;
-        if (a.parsing(av) == 0)
-            a.checkFileBtc(av[1]);
+        a.algo(av);
     }
     else
     {

@@ -14,7 +14,7 @@ class RPN
     private :
         std::stack<int> stack;
     public :
-        int parsing(const char **av);
+        int algo(char **av);
 
 };
 
