@@ -2,19 +2,20 @@
 
 int check(std::string a)
 {
+    if (a.empty())
+        return 1;
     for(std::string::iterator it = a.begin(); it < a.end(); it++)
     {
         if (*it == '-' && it == a.begin())
             continue;
-        else if (!std::isdigit(*it))
+        else if (!std::isdigit(*it) && *it != ' ')
             return 1;
     }
     return 0;
 }
 
-int parsing(char *av)
+int parsing(std::string a)
 {
-    std::string a(av);
     std::istringstream ss(a);
     long token;
     int nb_elements = 0;
@@ -55,52 +56,135 @@ void PmergeMe::tri()
 
 int  PmergeMe::search()
 {
-    int j;
-    int i = 0;
-    int cle = 0;
-    for(j = 1; A[j - 1] < A[j] && (j) < A.size(); j++)
-    {
-    }
+    size_t j = 1;
+    if (A.empty())
+        return 0;
+    if (A.size() < 2)
+        return A.size(); 
+    while (j < A.size() && A[j - 1] < A[j])
+        j++;
     return j;
 }
 
-void PmergeMe::tri_insert()
+int PmergeMe::triInsert()
 {
-    int j;
     int i = 0;
     int cle = 0;
-    int tmp;
-    while(j < A.size())
+    if (A.empty())
+        return 1;
+    for (size_t j = 0; j < A.size(); ++j)
     {
-        j = this->search();
         cle = A[j];
         i = j - 1;
         while (i >= 0 && A[i] > cle)
         {
             A[i + 1] = A[i];
-            i--;
-            A[i + 1] = cle;
+            i--; 
         }
+        A[i + 1] = cle;
     }
+    return 0;
 }
 
-int PmergeMe::algo(char *av)
-{    
-    std::string a(av);
-    if (parsing(av) || check(a))
+void PmergeMe::display()
+{
+    if (A.size() > 5)
     {
-        std::cout << "Error" << std::endl;
-        return 1;
+        std::cout << "Before: "; 
+        std::vector<int>::iterator it = justForDisplay.begin();
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " [...]\n";
+        std::cout << "After: "; 
+        it = A.begin();
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " [...]\n"; it++;
     }
-    std::istringstream ss(a);
-    long token;
-    while (ss >> token)
-    { 
-        this->m.push_back(token);
+    else
+    {
+        std::cout << "Before: "; 
+        std::vector<int>::iterator it = justForDisplay.begin();
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " \n"; it++;
+        std::cout << "After: "; 
+        it = A.begin();
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " \n";
+    }
+    double tt = 1000000.0 * (end - start) / CLOCKS_PER_SEC;
+    double t = ((double)(endSort - startSort)) * 1000000.0 / CLOCKS_PER_SEC;
+
+    std::cout << "Time to process a range of " << A.size() << " elements with std::vector : " << tt << " us\n";
+    std::cout << "Time to process a range of " << A.size() << " elements with std::deque : " << t << " us\n";
+}
+
+int PmergeMe::algo(char **av)
+{    
+    int i = 1;
+    while (av[i])
+    {
+        std::string a(av[i]);
+        if (check(a) || parsing(a))
+        {
+            std::cout << "Error1 " << check(a) << std::endl;
+            return 1;
+        }
+        std::istringstream ss(a);
+        long token;
+        while (ss >> token)
+        {
+            this->m.push_back(token);
+            this->Test.push_back(token);
+        }
+        i++;
     }
     if (this->m.size() % 2 == 0)
         this->pair = 1;
     else 
         this->pair = 0;
+    justForDisplay = m;
+    start = clock();
     this->tri();
+    if (triInsert())
+    {
+        std::cout << "Error2 \n";
+        return 1;
+    }
+    if (secondTri())
+    {
+        std::cout << "Error3 \n";
+        return 1;
+    }
+    return 0;
+}
+
+void PmergeMe::triSort()
+{
+    startSort = clock();
+    std::sort(Test.begin(), Test.end());
+    endSort = clock();
+}
+
+int PmergeMe::secondTri()
+{
+    if (B.empty())
+        return 1;
+    while(B.size())
+    {
+        std::vector<int>::iterator it = std::lower_bound(A.begin(), A.end(), B.back());
+        A.insert(it, B.back()); B.pop_back();
+    }
+    end = clock();
+    return 0;
 }

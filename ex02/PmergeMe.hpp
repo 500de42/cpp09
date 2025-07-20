@@ -6,6 +6,10 @@
 #include <algorithm>
 #include <sstream>
 #include <limits.h>
+#include <deque>
+
+int check(std::string a);
+int parsing(std::string a);
 
 class PmergeMe
 {
@@ -13,11 +17,16 @@ class PmergeMe
         std::vector<int> A;
         std::list<int> B;
         std::vector<int> m;
-        int pair;
-        int impair;      
+        std::deque<int> Test;
+        std::vector<int> justForDisplay;
+        int pair, impair;
+        clock_t start, startSort, end, endSort;
     public :
-        int algo(char *av);
+        int algo(char **av);
         void tri();
-        void tri_insert();
+        int triInsert();
+        int secondTri();
         int search();
+        void display();
+        void triSort();
 };
