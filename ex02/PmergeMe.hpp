@@ -10,12 +10,14 @@
 class PmergeMe
 {
     private :
-        std::list<int> List;
-        std::vector<int> Vector;
+        std::vector<int> A;
+        std::list<int> B;
         std::vector<int> m;
         int pair;
         int impair;      
     public :
         int algo(char *av);
         void tri();
+        void tri_insert();
+        int search();
 };

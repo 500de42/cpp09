@@ -32,6 +32,7 @@ void PmergeMe::tri()
     if (!this->pair)
     {
         this->impair = this->m.back(); this->m.pop_back();
+        this->B.push_back(impair);
         this->pair = 1;
     }
     if (this->m.size())
@@ -40,16 +41,47 @@ void PmergeMe::tri()
         int b = this->m.back(); this->m.pop_back();
         if (a > b)
         {
-            this->Vector.push_back(a);
-            this->List.push_back(b);
+            this->A.push_back(a);
+            this->B.push_back(b);
         }
         else
         {
-            this->Vector.push_back(b);
-            this->List.push_back(a);
+            this->A.push_back(b);
+            this->B.push_back(a);
+        }
+        tri();
+    }
+}
+
+int  PmergeMe::search()
+{
+    int j;
+    int i = 0;
+    int cle = 0;
+    for(j = 1; A[j - 1] < A[j] && (j) < A.size(); j++)
+    {
+    }
+    return j;
+}
+
+void PmergeMe::tri_insert()
+{
+    int j;
+    int i = 0;
+    int cle = 0;
+    int tmp;
+    while(j < A.size())
+    {
+        j = this->search();
+        cle = A[j];
+        i = j - 1;
+        while (i >= 0 && A[i] > cle)
+        {
+            A[i + 1] = A[i];
+            i--;
+            A[i + 1] = cle;
         }
     }
-
 }
 
 int PmergeMe::algo(char *av)
@@ -70,41 +102,5 @@ int PmergeMe::algo(char *av)
         this->pair = 1;
     else 
         this->pair = 0;
-    // if (P.size() % 2 == 0)
-    // {
-    //     while (P.size())
-    //     {
-    //         nba = P.back(); P.pop_back();
-    //         nbb = P.back(); P.pop_back();
-    //         if (nba > nbb)
-    //         {
-    //             Vector.push_back(nba);
-    //             List.push_back(nbb);
-    //         }
-    //         else
-    //         {
-    //             Vector.push_back(nbb);
-    //             List.push_back(nba);
-    //         }
-    //     }
-    // }
-    // else
-    // {
-    //     while (P.size() != 1)
-    //     {
-    //         nba = P.back(); P.pop_back();
-    //         nbb = P.back(); P.pop_back();
-    //         if (nba > nbb)
-    //         {
-    //             Vector.push_back(nba);
-    //             List.push_back(nbb);
-    //         }
-    //         else
-    //         {
-    //             Vector.push_back(nbb);
-    //             List.push_back(nba);
-    //         }
-    //     }
-    //     List.push_back(P.back());
-    // }
+    this->tri();
 }
