@@ -21,11 +21,23 @@ int parsing(std::string a)
     int nb_elements = 0;
     while (ss >> token)
     {
-        if (token > INT_MAX || token < INT_MIN)
+        if (token > INT_MAX || token < 0)
             return 1;
         nb_elements++;
     }
     return 0;
+}
+
+int  PmergeMe::search()
+{
+    size_t j = 1;
+    if (A.empty())
+        return 0;
+    if (A.size() < 2)
+        return A.size(); 
+    while (j < A.size() && A[j - 1] < A[j])
+        j++;
+    return j;
 }
 
 void PmergeMe::tri()
@@ -36,7 +48,7 @@ void PmergeMe::tri()
         this->B.push_back(impair);
         this->pair = 1;
     }
-    if (this->m.size())
+    while (this->m.size())
     {
         int a = this->m.back(); this->m.pop_back();
         int b = this->m.back(); this->m.pop_back();
@@ -50,20 +62,7 @@ void PmergeMe::tri()
             this->A.push_back(b);
             this->B.push_back(a);
         }
-        tri();
     }
-}
-
-int  PmergeMe::search()
-{
-    size_t j = 1;
-    if (A.empty())
-        return 0;
-    if (A.size() < 2)
-        return A.size(); 
-    while (j < A.size() && A[j - 1] < A[j])
-        j++;
-    return j;
 }
 
 int PmergeMe::triInsert()
@@ -84,49 +83,6 @@ int PmergeMe::triInsert()
         A[i + 1] = cle;
     }
     return 0;
-}
-
-void PmergeMe::display()
-{
-    if (A.size() > 5)
-    {
-        std::cout << "Before: "; 
-        std::vector<int>::iterator it = justForDisplay.begin();
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " [...]\n";
-        std::cout << "After: "; 
-        it = A.begin();
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " [...]\n"; it++;
-    }
-    else
-    {
-        std::cout << "Before: "; 
-        std::vector<int>::iterator it = justForDisplay.begin();
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " \n"; it++;
-        std::cout << "After: "; 
-        it = A.begin();
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " "; it++;
-        std::cout << *it << " \n";
-    }
-    double tt = 1000000.0 * (end - start) / CLOCKS_PER_SEC;
-    double t = ((double)(endSort - startSort)) * 1000000.0 / CLOCKS_PER_SEC;
-
-    std::cout << "Time to process a range of " << A.size() << " elements with std::vector : " << tt << " us\n";
-    std::cout << "Time to process a range of " << A.size() << " elements with std::deque : " << t << " us\n";
 }
 
 int PmergeMe::algo(char **av)
@@ -180,11 +136,76 @@ int PmergeMe::secondTri()
 {
     if (B.empty())
         return 1;
+    size_t j0 = 0, j1 = 1;
+    while(j1 < B.size())
+    {
+        if (B[j1] != -1)
+        {
+            std::vector<int>::iterator it = std::lower_bound(A.begin(), A.end(), B[j1]);
+            A.insert(it, B[j1]);
+        }
+        B[j1] = -1;
+        int next = j1 + 2 * j0;
+        j0 = j1;
+        j1 = next;
+    }
+    B.erase(std::remove(B.begin(), B.end(), -1), B.end());
     while(B.size())
     {
+        // if (B.back() == -1)
+        // {
+        //     B.pop_back();
+        //     continue;
+        // }
         std::vector<int>::iterator it = std::lower_bound(A.begin(), A.end(), B.back());
         A.insert(it, B.back()); B.pop_back();
     }
     end = clock();
     return 0;
 }
+
+void PmergeMe::display()
+{
+    if (A.size() > 5)
+    {
+        std::cout << "Before: "; 
+        std::vector<int>::iterator it = justForDisplay.begin();
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " [...]\n";
+        std::cout << "After: "; 
+        it = A.begin();
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " "; it++;
+        std::cout << *it << " [...]\n"; it++;
+    }
+    else
+    {
+        std::cout << "Before: "; 
+        std::vector<int>::iterator it = justForDisplay.begin();
+        for(size_t i = 0; i < justForDisplay.size() - 1; i++)
+        {
+            std::cout << *it << " "; it++;
+        }
+        std::cout << *it << " \n"; it++;
+        std::cout << "After: "; 
+        it = A.begin();
+        for(size_t i = 0; i < A.size() - 1; i++)
+        {
+            std::cout << *it << " "; it++;
+        }
+        std::cout << *it << " \n";
+    }
+    double tt = ((double)(end - start)) * 10.0 / CLOCKS_PER_SEC;
+    double t = ((double)(endSort - startSort)) * 10.0 / CLOCKS_PER_SEC;
+
+    std::cout << "Time to process a range of " << A.size() << " elements with std::vector : " << tt << " us\n";
+    std::cout << "Time to process a range of " << A.size() << " elements with std::deque : " << t << " us\n";
+}
+
+// [4, 5, 1, 3 ,2]
+// [0, 1, 2, 3, 4 ,7]

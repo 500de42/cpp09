@@ -15,7 +15,7 @@ class PmergeMe
 {
     private :
         std::vector<int> A;
-        std::list<int> B;
+        std::vector<int> B;
         std::vector<int> m;
         std::deque<int> Test;
         std::vector<int> justForDisplay;
