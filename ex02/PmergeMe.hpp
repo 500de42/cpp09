@@ -8,6 +8,7 @@
 #include <sstream>
 #include <vector>
 #include <iomanip>
+#include <utility>
 
 int	check(std::string a);
 int	parsing(std::string a);
@@ -15,8 +16,9 @@ int	parsing(std::string a);
 class PmergeMe
 {
   private:
-	std::vector<int> A, B, m, Vector, justForDisplay, Pair;
-    std::deque<int> deq;
+	std::vector<int> A, B, m, justForDisplay;
+	std::vector<std::pair<int, int> > Pair, Pair2;
+    std::deque<int> deq, deq2, deqq;
 	int pair, impair;
 	clock_t start, startSort, end, endSort;
 
@@ -27,7 +29,14 @@ class PmergeMe
 	int secondTri();
 	int search();
 	void display();
-	void triSort();
     int findMin();
-    int returnPair(int nb);
+    void returnPair();
+
+
+	int algo2(char **av);
+	void tri2();
+	int triInsert2();
+	int secondTri2();
+    int findMin2();
+    void returnPair2();
 };
