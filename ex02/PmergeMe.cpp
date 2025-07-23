@@ -28,13 +28,52 @@ int parsing(std::string a)
     return 0;
 }
 
+int  PmergeMe::findMin()
+{
+    int nb = 0;
+    std::vector<int>::iterator it = A.begin();
+    nb = *it;
+    for(it = A.begin(); it != A.end(); it++)
+    {
+        if (nb > *it)
+        {
+            nb = *it;
+        }
+    }
+    return nb;
+}
+
+int PmergeMe::returnPair(int nb)
+{
+    int num = -1;
+    for(std::vector<int>::iterator it = Pair.begin(); it != Pair.end(); it++)
+    {
+        std::cout << *it << "\n\n";
+        if (*it == nb)
+        {   
+            it++;
+            num  = *it;
+            break;
+        }
+    }
+    for(std::vector<int>::iterator it = B.begin(); it != B.end(); it++)
+    {
+        if (*it == num)
+        {
+            B.erase(it);
+            return num;
+        }
+    }
+    return -1;
+}
+
 int  PmergeMe::search()
 {
     size_t j = 1;
     if (A.empty())
         return 0;
     if (A.size() < 2)
-        return A.size(); 
+        return A.size();
     while (j < A.size() && A[j - 1] < A[j])
         j++;
     return j;
@@ -56,11 +95,15 @@ void PmergeMe::tri()
         {
             this->A.push_back(a);
             this->B.push_back(b);
+            this->Pair.push_back(a);
+            this->Pair.push_back(b);
         }
         else
         {
             this->A.push_back(b);
             this->B.push_back(a);
+            this->Pair.push_back(b);
+            this->Pair.push_back(a);
         }
     }
 }
@@ -87,6 +130,7 @@ int PmergeMe::triInsert()
 
 int PmergeMe::algo(char **av)
 {    
+    start = clock();
     int i = 1;
     while (av[i])
     {
@@ -101,7 +145,7 @@ int PmergeMe::algo(char **av)
         while (ss >> token)
         {
             this->m.push_back(token);
-            this->Test.push_back(token);
+            this->Vector.push_back(token);
         }
         i++;
     }
@@ -110,7 +154,6 @@ int PmergeMe::algo(char **av)
     else 
         this->pair = 0;
     justForDisplay = m;
-    start = clock();
     this->tri();
     if (triInsert())
     {
@@ -128,7 +171,7 @@ int PmergeMe::algo(char **av)
 void PmergeMe::triSort()
 {
     startSort = clock();
-    std::sort(Test.begin(), Test.end());
+    std::sort(Vector.begin(), Vector.end());
     endSort = clock();
 }
 
@@ -152,11 +195,6 @@ int PmergeMe::secondTri()
     B.erase(std::remove(B.begin(), B.end(), -1), B.end());
     while(B.size())
     {
-        // if (B.back() == -1)
-        // {
-        //     B.pop_back();
-        //     continue;
-        // }
         std::vector<int>::iterator it = std::lower_bound(A.begin(), A.end(), B.back());
         A.insert(it, B.back()); B.pop_back();
     }
@@ -200,11 +238,10 @@ void PmergeMe::display()
         }
         std::cout << *it << " \n";
     }
-    double tt = ((double)(end - start)) * 10.0 / CLOCKS_PER_SEC;
-    double t = ((double)(endSort - startSort)) * 10.0 / CLOCKS_PER_SEC;
-
-    std::cout << "Time to process a range of " << A.size() << " elements with std::vector : " << tt << " us\n";
-    std::cout << "Time to process a range of " << A.size() << " elements with std::deque : " << t << " us\n";
+    double tt = ((end - start) / (double) CLOCKS_PER_SEC * 1000);
+    double t = ((endSort - startSort) / (double) CLOCKS_PER_SEC * 1000);
+    std::cout << std::fixed << std::setprecision(5) << "Time to process a range of " << A.size() << " elements with std::vector : " << tt << " us\n";
+    std::cout << std::fixed << std::setprecision(5) << "Time to process a range of " << A.size() << " elements with std::deque :  " << t << " us\n";
 }
 
 // [4, 5, 1, 3 ,2]
