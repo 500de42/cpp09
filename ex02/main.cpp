@@ -1,5 +1,33 @@
 #include "PmergeMe.hpp"
 
+bool hasDuplicate(const std::vector<unsigned int>& vec)
+{
+    std::set<unsigned int> seen;
+    for (size_t i = 0; i < vec.size(); ++i) 
+	{
+        // insert() renvoie une paire : .second == false si déjà présent
+        if (!seen.insert(vec[i]).second)
+            return true;  // doublon trouvé
+    }
+    return false;  // pas de doublon
+}
+
+bool hasDuplicate(const std::deque<unsigned int>& vec)
+{
+    std::set<unsigned int> seen;
+    for (size_t i = 0; i < vec.size(); ++i)
+	{
+        if (!seen.insert(vec[i]).second) 
+            return true;
+    }
+    return false;
+}
+
+bool alreadyInsert(std::set<unsigned int>& vec, unsigned int nb)
+{
+	return vec.find(nb) != vec.end();
+}
+
 int PmergeMe::algo2(char **av)
 {
     startSort = clock();
@@ -9,7 +37,7 @@ int PmergeMe::algo2(char **av)
 	    std::string a(av[i]);
 	    if (check(a) || parsing(a))
 	    {
-	        std::cout << "Error1 " << check(a) << std::endl;
+	        std::cout << "Error"<< std::endl;
 	        return (1);
 	    }
 	    std::istringstream ss(a);
@@ -20,19 +48,28 @@ int PmergeMe::algo2(char **av)
 	    }
 	    i++;
 	}
-	if (this->m.size() % 2 == 0)
+	if (hasDuplicate(deqq))
+	{
+		std::cout << "Error" << std::endl;
+		return (1);
+	}
+	if (this->deqq.size() % 2 == 0)
+	{
 		this->pair = 1;
+	}
 	else
+	{
 		this->pair = 0;
+	}
 	this->tri2();
 	if (triInsert2())
 	{
-		std::cout << "Error2 \n";
+		std::cout << "Error\n";
 		return (1);
 	}
 	if (secondTri2())
 	{
-		std::cout << "Error3 \n";
+		std::cout << "Error\n";
 		return (1);
 	}
 	return (0);
@@ -45,6 +82,7 @@ void PmergeMe::tri2()
 
 	if (!this->pair)
 	{
+
 		this->impair = this->deqq.back();
 		this->deqq.pop_back();
 		this->deq2.push_back(impair);
@@ -58,7 +96,7 @@ void PmergeMe::tri2()
 		this->deqq.pop_back();
 		if (a > b)
 		{
-			this->deq.push_back(a);
+            this->deq.push_back(a);
 			this->deq2.push_back(b);
             this->Pair.push_back(std::make_pair(a, b));
 		}
@@ -73,11 +111,9 @@ void PmergeMe::tri2()
 
 int PmergeMe::triInsert2()
 {
-	int	i;
-	int	cle;
+    int i = 0;
+    unsigned int cle = 0;
 
-	i = 0;
-	cle = 0;
 	if (deq.empty())
 		return (1);
 	for (size_t j = 0; j < deq.size(); ++j)
@@ -94,68 +130,75 @@ int PmergeMe::triInsert2()
 	return (0);
 }
 
+void PmergeMe::affiche(std::vector<unsigned int> &a)
+{
+	for(size_t i = 0; i < a.size(); i++)
+	{
+		std::cout << a[i] << "\n\n";
+	}
+}
+
 int PmergeMe::secondTri2()
 {
-	size_t	j0 = 0, j1;
-	int		next;
-
 	if (deq2.empty())
 		return (1);
-	j0 = 0, j1 = 1;
+	size_t	j0 = 0, j1 = 1;
+	std::set<unsigned int> insert;
+
 	while (j1 < deq2.size())
 	{
-		if (deq2[j1] != -1)
-		{
-			std::deque<int>::iterator it = std::lower_bound(deq.begin(), deq.end(),
-					deq2[j1]);
-			deq.insert(it, deq2[j1]);
-		}
-		deq2[j1] = -1;
-		next = j1 + 2 * j0;
-		j0 = j1;
-		j1 = next;
+		std::cout << deq2[j1] << "\n";
+		std::deque<unsigned int>::iterator it = std::lower_bound(deq.begin(), deq.end(), deq2[j1]);
+		deq.insert(it, deq2[j1]);
+		insert.insert(deq2[j1]);
+        unsigned int next = j1 + 2 * j0;
+        j0 = j1;
+        j1 = next;
 	}
-	deq2.erase(std::remove(deq2.begin(), deq2.end(), -1), deq2.end());
 	while (deq2.size())
 	{
-		std::deque<int>::iterator it = std::lower_bound(deq.begin(), deq.end(),
-				deq2.back());
-		deq.insert(it, deq2.back());
+		if (insert.find(deq2.back()) == insert.end())
+		{
+			std::deque<unsigned int>::iterator it = std::lower_bound(deq.begin(), deq.end(), deq2.back());
+			deq.insert(it, deq2.back());
+			insert.insert(deq2.back());
+		}
 		deq2.pop_back();
 	}
 	endSort = clock();
 	return (0);
 }
 
-int  PmergeMe::findMin2()
-{
-    int nb = 0;
-    std::deque<int>::iterator it = deq2.begin();
-    nb = *it;
-    for(it = deq2.begin(); it != deq2.end(); it++)
-    {
-        if (nb > *it)
-        {
-            nb = *it;
-        }
-    }
-    return nb;
-}
+// int  PmergeMe::findMin2()
+// {
+//     unsigned int nb = 0;
+//     std::deque<unsigned int>::iterator it = deq2.begin();
+//     nb = *it;
+//     for(it = deq2.begin(); it != deq2.end(); it++)
+//     {
+//         if (nb > *it)
+//         {
+//             nb = *it;
+//         }
+//     }
+//     return nb;
+// }
 
 void PmergeMe::returnPair2()
 {
-    int mindeq2 = findMin();
-    std::deque<int>::iterator it = std::find(deq2.begin(), deq2.end(), mindeq2);
+    unsigned int mindeq2 = findMin2();
+    std::deque<unsigned int>::iterator it = std::find(deq2.begin(), deq2.end(), mindeq2);
     if (it != deq2.end()) 
     {
         deq2.erase(it);
         A.insert(A.begin(), mindeq2);
     }
+	// affiche2(deq2);
 }
 
 int	main(int ac, char **av)
 {
-		PmergeMe a;
+	PmergeMe a;
 
 	if (ac == 1)
 	{

@@ -6,9 +6,7 @@ int check(std::string a)
         return 1;
     for(std::string::iterator it = a.begin(); it < a.end(); it++)
     {
-        if (*it == '-' && it == a.begin())
-            continue;
-        else if (!std::isdigit(*it) && *it != ' ')
+        if (!std::isdigit(*it) && *it != ' ')
             return 1;
     }
     return 0;
@@ -21,7 +19,7 @@ int parsing(std::string a)
     int nb_elements = 0;
     while (ss >> token)
     {
-        if (token > INT_MAX || token < 0)
+        if (token < 0)
             return 1;
         nb_elements++;
     }
@@ -30,8 +28,8 @@ int parsing(std::string a)
 
 int  PmergeMe::findMin()
 {
-    int nb = 0;
-    std::vector<int>::iterator it = B.begin();
+    unsigned int nb = 0;
+    std::vector<unsigned int>::iterator it = B.begin();
     nb = *it;
     for(it = B.begin(); it != B.end(); it++)
     {
@@ -43,18 +41,34 @@ int  PmergeMe::findMin()
     return nb;
 }
 
-void PmergeMe::returnPair()
+int  PmergeMe::findMin2()
 {
-    int minB = findMin();
-    std::vector<int>::iterator it = std::find(B.begin(), B.end(), minB);
+    unsigned int nb = 0;
+    std::deque<unsigned int>::iterator it = deq2.begin();
+    nb = *it;
+    for(it = deq2.begin(); it != deq2.end(); it++)
+    {
+        if (nb > *it)
+        {
+            nb = *it;
+        }
+    }
+    return nb;
+}
+
+void PmergeMe::returnPair()
+{    affiche(B);
+    unsigned int minB = findMin();
+    std::vector<unsigned int>::iterator it = std::find(B.begin(), B.end(), minB);
     if (it != B.end()) 
     {
         B.erase(it);
         A.insert(A.begin(), minB);
     }
+    affiche(B);
 }
 
-int  PmergeMe::search()
+unsigned int  PmergeMe::search()
 {
     size_t j = 1;
     if (A.empty())
@@ -76,8 +90,8 @@ void PmergeMe::tri()
     }
     while (this->m.size())
     {
-        int a = this->m.back(); this->m.pop_back();
-        int b = this->m.back(); this->m.pop_back();
+        unsigned int a = this->m.back(); this->m.pop_back();
+        unsigned int b = this->m.back(); this->m.pop_back();
         if (a > b)
         {
             this->A.push_back(a);
@@ -96,7 +110,7 @@ void PmergeMe::tri()
 int PmergeMe::triInsert()
 {
     int i = 0;
-    int cle = 0;
+    unsigned int cle = 0;
     if (A.empty())
         return 1;
     for (size_t j = 0; j < A.size(); ++j)
@@ -122,7 +136,7 @@ int PmergeMe::algo(char **av)
         std::string a(av[i]);
         if (check(a) || parsing(a))
         {
-            std::cout << "Error" << check(a) << std::endl;
+            std::cout << "Error" << std::endl;
             return 1;
         }
         std::istringstream ss(a);
@@ -133,6 +147,11 @@ int PmergeMe::algo(char **av)
         }
         i++;
     }
+	if (hasDuplicate(m))
+	{
+		std::cout << "Error" << std::endl;
+		return (1);
+	}
     if (this->m.size() % 2 == 0)
         this->pair = 1;
     else 
@@ -158,23 +177,29 @@ int PmergeMe::secondTri()
     if (B.empty())
         return 1;
     size_t j0 = 0, j1 = 1;
+    std::set<unsigned int> insert;
+
     while(j1 < B.size())
-    {
-        if (B[j1] != -1)
+    {    
+        if (insert.find(B[j1]) == insert.end())
         {
-            std::vector<int>::iterator it = std::lower_bound(A.begin(), A.end(), B[j1]);
+            std::vector<unsigned int>::iterator it = std::lower_bound(A.begin(), A.end(), B[j1]);
             A.insert(it, B[j1]);
+		    insert.insert(B[j1]);
         }
-        B[j1] = -1;
-        int next = j1 + 2 * j0;
+        unsigned int next = j1 + 2 * j0;
         j0 = j1;
         j1 = next;
     }
-    B.erase(std::remove(B.begin(), B.end(), -1), B.end());
     while(B.size())
     {
-        std::vector<int>::iterator it = std::lower_bound(A.begin(), A.end(), B.back());
-        A.insert(it, B.back()); B.pop_back();
+        if (insert.find(B.back()) == insert.end())
+		{
+            std::vector<unsigned int>::iterator it = std::lower_bound(A.begin(), A.end(), B.back());
+            A.insert(it, B.back());
+            insert.insert(B.back());
+        }
+        B.pop_back();
     }
     end = clock();
     return 0;
@@ -185,7 +210,7 @@ void PmergeMe::display()
     if (A.size() > 5)
     {
         std::cout << "Before: "; 
-        std::vector<int>::iterator it = justForDisplay.begin();
+        std::vector<unsigned int>::iterator it = justForDisplay.begin();
         std::cout << *it << " "; it++;
         std::cout << *it << " "; it++;
         std::cout << *it << " "; it++;
@@ -202,7 +227,7 @@ void PmergeMe::display()
     else
     {
         std::cout << "Before: "; 
-        std::vector<int>::iterator it = justForDisplay.begin();
+        std::vector<unsigned int>::iterator it = justForDisplay.begin();
         for(size_t i = 0; i < justForDisplay.size() - 1; i++)
         {
             std::cout << *it << " "; it++;

@@ -9,17 +9,22 @@
 #include <vector>
 #include <iomanip>
 #include <utility>
+#include <set>
+
 
 int	check(std::string a);
 int	parsing(std::string a);
-
+bool hasDuplicate(const std::vector<unsigned int>& vec);
+bool hasDuplicate(const std::deque<unsigned int>& vec);
+bool alreadyInsert(std::set<unsigned int>& vec, unsigned int nb);
 class PmergeMe
 {
   private:
-	std::vector<int> A, B, m, justForDisplay;
-	std::vector<std::pair<int, int> > Pair, Pair2;
-    std::deque<int> deq, deq2, deqq;
-	int pair, impair;
+	std::vector<unsigned int> A, B, m, justForDisplay;
+	std::vector<std::pair<unsigned int, unsigned int> > Pair, Pair2;
+    std::deque<unsigned int> deq, deq2, deqq;
+	std::set<unsigned int> seen;
+	unsigned int pair, impair;
 	clock_t start, startSort, end, endSort;
 
   public:
@@ -27,7 +32,7 @@ class PmergeMe
 	void tri();
 	int triInsert();
 	int secondTri();
-	int search();
+	unsigned int search();
 	void display();
     int findMin();
     void returnPair();
@@ -39,4 +44,7 @@ class PmergeMe
 	int secondTri2();
     int findMin2();
     void returnPair2();
+void affiche(std::vector<unsigned int> &a);
 };
+
+
