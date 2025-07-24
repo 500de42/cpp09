@@ -57,15 +57,14 @@ int  PmergeMe::findMin2()
 }
 
 void PmergeMe::returnPair()
-{    affiche(B);
+{
     unsigned int minB = findMin();
     std::vector<unsigned int>::iterator it = std::find(B.begin(), B.end(), minB);
     if (it != B.end()) 
     {
-        B.erase(it);
         A.insert(A.begin(), minB);
+        B.erase(it);
     }
-    affiche(B);
 }
 
 unsigned int  PmergeMe::search()
@@ -178,9 +177,10 @@ int PmergeMe::secondTri()
         return 1;
     size_t j0 = 0, j1 = 1;
     std::set<unsigned int> insert;
-
+    returnPair();
+    insert.insert(A.front());
     while(j1 < B.size())
-    {    
+    {
         if (insert.find(B[j1]) == insert.end())
         {
             std::vector<unsigned int>::iterator it = std::lower_bound(A.begin(), A.end(), B[j1]);

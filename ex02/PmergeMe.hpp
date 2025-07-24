@@ -44,7 +44,8 @@ class PmergeMe
 	int secondTri2();
     int findMin2();
     void returnPair2();
-void affiche(std::vector<unsigned int> &a);
+	void affiche(std::vector<unsigned int> &a);
+	void affiche(std::deque<unsigned int> &a);
 };
 
 

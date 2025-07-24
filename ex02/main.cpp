@@ -130,6 +130,14 @@ int PmergeMe::triInsert2()
 	return (0);
 }
 
+void PmergeMe::affiche(std::deque<unsigned int> &a)
+{
+	for(size_t i = 0; i < a.size(); i++)
+	{
+		std::cout << a[i] << "\n\n";
+	}
+}
+
 void PmergeMe::affiche(std::vector<unsigned int> &a)
 {
 	for(size_t i = 0; i < a.size(); i++)
@@ -144,13 +152,16 @@ int PmergeMe::secondTri2()
 		return (1);
 	size_t	j0 = 0, j1 = 1;
 	std::set<unsigned int> insert;
-
+    returnPair2();
+	insert.insert(deq.front());
 	while (j1 < deq2.size())
 	{
-		std::cout << deq2[j1] << "\n";
-		std::deque<unsigned int>::iterator it = std::lower_bound(deq.begin(), deq.end(), deq2[j1]);
-		deq.insert(it, deq2[j1]);
-		insert.insert(deq2[j1]);
+        if (insert.find(deq2[j1]) == insert.end())
+        {
+			std::deque<unsigned int>::iterator it = std::lower_bound(deq.begin(), deq.end(), deq2[j1]);
+			deq.insert(it, deq2[j1]);
+			insert.insert(deq2[j1]);
+		}
         unsigned int next = j1 + 2 * j0;
         j0 = j1;
         j1 = next;
@@ -169,31 +180,16 @@ int PmergeMe::secondTri2()
 	return (0);
 }
 
-// int  PmergeMe::findMin2()
-// {
-//     unsigned int nb = 0;
-//     std::deque<unsigned int>::iterator it = deq2.begin();
-//     nb = *it;
-//     for(it = deq2.begin(); it != deq2.end(); it++)
-//     {
-//         if (nb > *it)
-//         {
-//             nb = *it;
-//         }
-//     }
-//     return nb;
-// }
-
 void PmergeMe::returnPair2()
 {
     unsigned int mindeq2 = findMin2();
     std::deque<unsigned int>::iterator it = std::find(deq2.begin(), deq2.end(), mindeq2);
     if (it != deq2.end()) 
     {
+    	deq.insert(deq.begin(), mindeq2);
         deq2.erase(it);
-        A.insert(A.begin(), mindeq2);
+
     }
-	// affiche2(deq2);
 }
 
 int	main(int ac, char **av)
