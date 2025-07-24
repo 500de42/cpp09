@@ -67,7 +67,6 @@ int Bitcoin::checkVal(std::string &val)
        return 3;
     else if (a > 1000)
     {
-        // std::cout << "valeur" << a << std::endl;
         return 1;
     }
     for(size_t i = 0; i < val.length(); i++)
@@ -87,28 +86,30 @@ int Bitcoin::checkVal(std::string &val)
     return 0;
 }
 
-// int Bitcoin::checkDate(std::string &date)
-// {
-//     if (date.length() < 10 || date[4] != '-' || date[7] != '-')
-//     {
-//         std::cout << "error format : " << date << std::endl;
-//         exit(1);
-//     }
-//     else if (date[10] != ',')
-//     {
-//         std::cout << "error format : " << date << std::endl;
-//         exit(1);
-//     }
-//     for(int i = 0; i < 10; i++)
-//     {
-//         if (!std::isdigit(date[i]) && i != 4 && i != 7)
-//         {
-//             std::cout << "only digits characters are accepted : " << date << std::endl;
-//             exit(1);
-//         }
-//     }
-//     return 0;
-// }
+int Bitcoin::checkDate(std::string &date)
+{
+    // std::string year = date.substr(0, 4);
+    if (date.length() < 10 || date[4] != '-' || date[7] != '-')
+    {
+        std::cout << "error format : " << date << std::endl;
+        exit(1);
+    }
+    else if (date[10] != ',')
+    {
+        std::cout << "error format : " << date << std::endl;
+        exit(1);
+    }
+    for(int i = 0; i < 10; i++)
+    {
+        if (!std::isdigit(date[i]) && i != 4 && i != 7)
+        {
+            std::cout << "only digits characters are accepted : " << date << std::endl;
+            exit(1);
+        }
+    }
+    // if (year > )
+    return 0;
+}
 
 int Bitcoin::errorCsv(const char *line, std::ifstream &readfile)
 {
@@ -236,6 +237,7 @@ int Bitcoin::checkFileBtc(char *file)
                 std::cout << "Error: not valid number\n";
                 continue; 
             }
+            
             if (this->csv.count(date))
             {
                 std::stringstream ss(val);
@@ -253,13 +255,26 @@ int Bitcoin::checkFileBtc(char *file)
                 }
                 else
                 {
+                    int before = 0;
                     std::map<std::string, float>::iterator it = csv.lower_bound(date);
-                    if (it != csv.begin() && it->first != date)
+                    if (it == csv.end())
+                    {
+                        if (csv.empty())
+                            continue;
                         it--;
+                        // date = it->first;
+                        before = 1;
+                    }
+                    if (it != csv.begin() && it->first != date)
+                    {   
+                        it--;
+                        // date = it->first;
+                        before = 1;
+                    }
                     std::stringstream ss(val);
                     float a;
                     ss >> a;
-                    std::cout << date << " => " << val << " = " << it->second * a << std::endl;                    
+                    std::cout << it->first << " => " << val << " = " << it->second * a << std::endl;        
                 }
             }
         }
