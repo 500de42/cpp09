@@ -81,6 +81,11 @@ unsigned int  PmergeMe::search()
 
 void PmergeMe::tri()
 {
+    if (this->m.size() == 1)
+    {
+        A.push_back(this->m.back()); this->m.pop_back();
+        return ;
+    }
     if (!this->pair)
     {
         this->impair = this->m.back(); this->m.pop_back();
@@ -111,7 +116,7 @@ int PmergeMe::triInsert()
     int i = 0;
     unsigned int cle = 0;
     if (A.empty())
-        return 1;
+    return 1;
     for (size_t j = 0; j < A.size(); ++j)
     {
         cle = A[j];
@@ -127,7 +132,12 @@ int PmergeMe::triInsert()
 }
 
 int PmergeMe::algo(char **av)
-{    
+{
+    if (!av[1][0] || !av)
+    {
+        std::cout << "Error\n";
+        return 1;
+    }
     start = clock();
     int i = 1;
     while (av[i])
@@ -164,6 +174,11 @@ int PmergeMe::algo(char **av)
     }
     if (secondTri())
     {
+        if (A.size() == 1)
+        {
+            this->end = clock();
+            return 0;
+        }
         std::cout << "Error\n";
         return 1;
     }
@@ -246,6 +261,3 @@ void PmergeMe::display()
     std::cout << std::fixed << std::setprecision(5) << "Time to process a range of " << A.size() << " elements with std::vector : " << tt << " ml\n";
     std::cout << std::fixed << std::setprecision(5) << "Time to process a range of " << deq.size() << " elements with std::deque :  " << t << " ml\n";
 }
-
-// [4, 5, 1, 3 ,2]
-// [0, 1, 2, 3, 4 ,7]

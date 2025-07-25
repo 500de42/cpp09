@@ -22,7 +22,12 @@ int RPN::algo(char **av)
     std::string token;
     std::string a(av[1]);
     std::istringstream ss(a);
-
+    int ope = 0;
+    if (!av[1][0] || !av)
+    {
+        std::cout << "Error\n";
+        return 1;
+    }
     while (ss >> token)
     {
         if (!Pars(token) && token != "0")
@@ -43,6 +48,7 @@ int RPN::algo(char **av)
         }
         else if (isOPerator(token))
         {
+            ope = 1;
             if (this->stack.size() >= 2)
             {
                 int a = stack.top(); stack.pop();
@@ -76,6 +82,9 @@ int RPN::algo(char **av)
     //     std::cout << stack.top() << std::endl;
     //     stack.pop();
     // }
-    std::cout << stack.top() << std::endl;
+    if (ope)
+        std::cout << stack.top() << std::endl;
+    else
+        std::cout << "Error" << std::endl;
     return 0;
 }

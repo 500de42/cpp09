@@ -30,6 +30,11 @@ bool alreadyInsert(std::set<unsigned int>& vec, unsigned int nb)
 
 int PmergeMe::algo2(char **av)
 {
+    if (!av[1][0] || !av)
+    {
+        std::cout << "Error\n";
+        return 1;
+    }
     startSort = clock();
 	int i = 1;
 	while (av[i])
@@ -69,6 +74,11 @@ int PmergeMe::algo2(char **av)
 	}
 	if (secondTri2())
 	{
+        if (deq.size() == 1)
+        {
+			this->endSort = clock();
+			return 0;
+		}
 		std::cout << "Error\n";
 		return (1);
 	}
@@ -79,7 +89,11 @@ void PmergeMe::tri2()
 {
 	int	a;
 	int	b;
-
+    if (this->deqq.size() == 1)
+    {
+        deq.push_back(this->deqq.back()); this->deqq.pop_back();
+        return ;
+    }
 	if (!this->pair)
 	{
 
