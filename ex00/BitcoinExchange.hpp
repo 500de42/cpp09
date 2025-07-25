@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <limits.h>
 #include <sstream>
-
+#include <iomanip>
 
 class Bitcoin
 {

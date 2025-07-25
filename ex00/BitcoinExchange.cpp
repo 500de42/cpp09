@@ -88,26 +88,18 @@ int Bitcoin::checkVal(std::string &val)
 
 int Bitcoin::checkDate(std::string &date)
 {
-    // std::string year = date.substr(0, 4);
     if (date.length() < 10 || date[4] != '-' || date[7] != '-')
     {
-        std::cout << "error format : " << date << std::endl;
-        exit(1);
-    }
-    else if (date[10] != ',')
-    {
-        std::cout << "error format : " << date << std::endl;
-        exit(1);
+        return(1);
     }
     for(int i = 0; i < 10; i++)
     {
         if (!std::isdigit(date[i]) && i != 4 && i != 7)
         {
             std::cout << "only digits characters are accepted : " << date << std::endl;
-            exit(1);
+            return(1);
         }
     }
-    // if (year > )
     return 0;
 }
 
@@ -135,7 +127,17 @@ int Bitcoin::checkFileCsv()
         return 1;
     }
     while (getline(readFile, line))
-    {//line.find("date,exchange_rate") != std::string::npos
+    {
+        size_t start = line.find_first_not_of(' ');
+        if (start != std::string::npos)
+            line = line.substr(start);
+        else
+            line = "";
+        if (line != "")
+        {
+            size_t itt = line.find_last_not_of(' ');
+            line = line.substr(0, itt + 1);
+        }
         if (line == "date,exchange_rate" && i == 0)
         {
             i++;
@@ -190,6 +192,16 @@ int Bitcoin::checkFileBtc(char *file)
     }
     while (getline(readFile, line))
     {
+        size_t start = line.find_first_not_of(' ');
+        if (start != std::string::npos)
+            line = line.substr(start);
+        else
+            line = "";
+        if (line != "")
+        {
+            size_t itt = line.find_last_not_of(' ');
+            line = line.substr(0, itt + 1);
+        }
         if (line == "date | value" && i == 0)
         {
             i++;
@@ -198,6 +210,7 @@ int Bitcoin::checkFileBtc(char *file)
         else if (i == 0)
         {
             std::cout << "The first line it's not good : " << line << std::endl;
+            return 1;
             continue;
         }
         found = line.find("|");
@@ -218,11 +231,10 @@ int Bitcoin::checkFileBtc(char *file)
             }
             if (checkVal(val) == 1)
             {
-                // std::cout << val << std::endl;
                 std::cout << "Error: too large a number.\n";
                 continue;
             }
-            else if (checkVal(val) == 2)
+            else if (checkVal(val) == 2 || checkDate(date))
             {
                 std::cout << "Error: bad input => " << line << std::endl;
                 continue;
@@ -244,7 +256,7 @@ int Bitcoin::checkFileBtc(char *file)
                 float a;
                 ss >> a;
                 std::map<std::string, float>::iterator it = csv.lower_bound(date);
-                std::cout << date << " => " << val << " = " << (it->second * a) << std::endl;
+                std::cout << std::fixed << std::setprecision(2) << date << " => " << val << " = " << (it->second * a) << std::endl;
             }
             else 
             {
@@ -262,19 +274,17 @@ int Bitcoin::checkFileBtc(char *file)
                         if (csv.empty())
                             continue;
                         it--;
-                        // date = it->first;
                         before = 1;
                     }
                     if (it != csv.begin() && it->first != date)
                     {   
                         it--;
-                        // date = it->first;
                         before = 1;
                     }
                     std::stringstream ss(val);
                     float a;
                     ss >> a;
-                    std::cout << it->first << " => " << val << " = " << it->second * a << std::endl;        
+                    std::cout << std::fixed << std::setprecision(2) << it->first << " => " << val << " = " << it->second * a << std::endl;        
                 }
             }
         }
